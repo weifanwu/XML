@@ -19,6 +19,11 @@ public class App {
         // This is the mapping for POST requests to "/RPC";
         // this is where you will want to handle incoming XML-RPC requests
         post("/RPC", (request, response) -> { response.status(500); return "TBD"; });
+        get("/get", (request, response) -> { 
+            response.status(400); 
+            return "Weifan is the wonderful student!"; 
+        });
+
 
         // Each of the verbs has a similar format: get() for GET,
         // put() for PUT, delete() for DELETE. There's also an exception()
