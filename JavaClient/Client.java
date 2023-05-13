@@ -2,8 +2,9 @@ import java.io.*;
 import java.net.*;
 import java.net.http.*;
 import javax.management.ValueExp;
-import javax.xml.parsers.*;
-import javax.xml.xpath.*;
+import javax.swing.plaf.basic.BasicOptionPaneUI.ButtonActionListener;
+import javax.swing.text.AbstractDocument.ElementEdit;
+import javax.xml.*;
 import org.w3c.dom.*;
 import org.w3c.dom.Node;
 
@@ -12,61 +13,82 @@ import org.w3c.dom.Node;
  * were introduced in Java11.
  */
 public class Client {
-    private static DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-
+    static String host = "";
+    static String port = "0";
     public static void main(String... args) throws Exception {
-        // System.out.println(add() == 0);
+        host = args[0];
+        port = args[1];
+        System.out.println(add() == 0);
         System.out.println(add(1, 2, 3, 4, 5) == 15);
-        // System.out.println(add(2, 4) == 6);
-        // System.out.println(subtract(12, 6) == 6);
-        // System.out.println(multiply(3, 4) == 12);
-        // System.out.println(multiply(1, 2, 3, 4, 5) == 120);
-        // System.out.println(divide(10, 5) == 2);
-        // System.out.println(modulo(10, 5) == 0);
+        System.out.println(add(2, 4) == 6);
+        System.out.println(subtract(12, 6) == 6);
+        System.out.println(multiply(3, 4) == 12);
+        System.out.println(multiply(1, 2, 3, 4, 5) == 120);
+        System.out.println(divide(10, 5) == 2);
+        System.out.println(modulo(10, 5) == 0);
     }
 
     public static int add(int lhs, int rhs) throws Exception {
-        return -1;
+        HttpClient client = HttpClient.newHttpClient();
+        String body = "<methodCall><params><param><value><i4>" + lhs + "</i4></value></param>" + "<param><value><i4>" + rhs + "</i4></value></param></params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/ADD")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Integer.parseInt(response.body());    
     }
 
     public static int add(Integer... params) throws Exception {
-        DocumentBuilder factory = dbf.newDocumentBuilder();
-        Document builder = factory.newDocument();
-        builder.appendChild(builder.createElement("methodCall"));
-        builder.getDocumentElement().appendChild(builder.createElement("params"));
-        NodeList elements = element.getElementsByTagName("params");
-        Element innerElement = (Element) elements.item(0);
-        for (Integer value : params) {
-            Element param = builder.createElement("param");
-            Element paramValue = builder.createElement("value");
-            paramValue.setTextContent(Integer.toString(value));
-            param.appendChild(paramValue);
-            innerElement.appendChild(param);
-        }
         HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://localhost:4567/get")).GET().build();
+        String body = "<methodCall><params>";
+        for (Integer value :  params) {
+            body = body + "<param><value><i4>" + value + "</i4></value></param>";
+        }
+        body += "</params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/ADD")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        System.out.println("This is the body: " + response.body());
-        return -1;
+        return Integer.parseInt(response.body());
     }
 
-    public static int subtract(int lhs, int rhs) throws Exception {
-        return -1;
+    public static int subtract(int lhs, int rhs) throws Exception { 
+        HttpClient client = HttpClient.newHttpClient();
+        String body = "<methodCall><params><param><value><i4>" + lhs + "</i4></value></param>" + "<param><value><i4>" + rhs + "</i4></value></param></params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/SUB")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Integer.parseInt(response.body());        
     }
 
     public static int multiply(int lhs, int rhs) throws Exception {
-        return -1;
+        HttpClient client = HttpClient.newHttpClient();
+        String body = "<methodCall><params><param><value><i4>" + lhs + "</i4></value></param>" + "<param><value><i4>" + rhs + "</i4></value></param></params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/MULT")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Integer.parseInt(response.body());        
     }
 
     public static int multiply(Integer... params) throws Exception {
-        return -1;
+        HttpClient client = HttpClient.newHttpClient();
+        String body = "<methodCall><params>";
+        for (Integer value :  params) {
+            body = body + "<param><value><i4>" + value + "</i4></value></param>";
+        }
+        body += "</params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/MULT")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Integer.parseInt(response.body());
     }
 
     public static int divide(int lhs, int rhs) throws Exception {
-        return -1;
+        HttpClient client = HttpClient.newHttpClient();
+        String body = "<methodCall><params><param><value><i4>" + lhs + "</i4></value></param>" + "<param><value><i4>" + rhs + "</i4></value></param></params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/DIV")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Integer.parseInt(response.body());        
     }
 
     public static int modulo(int lhs, int rhs) throws Exception {
-        return -1;
+        HttpClient client = HttpClient.newHttpClient();
+        String body = "<methodCall><params><param><value><i4>" + lhs + "</i4></value></param>" + "<param><value><i4>" + rhs + "</i4></value></param></params></methodCall>";
+        HttpRequest request = HttpRequest.newBuilder().uri(URI.create("http://" + host + ":" + port + "/RPC/MOD")).POST(HttpRequest.BodyPublishers.ofString(body)).build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return Integer.parseInt(response.body());        
     }
 }
